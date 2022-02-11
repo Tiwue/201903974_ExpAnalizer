@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,21 +32,21 @@ public class interfaz extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel3, jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem abrirItem;
+    private javax.swing.JMenuItem guardarItem;
+    private javax.swing.JMenuItem guardarComoItem;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem nuevoItem;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea consolaArea;
+    private javax.swing.JTextArea editorArea;
     private javax.swing.JTree jTree1;
     private DefaultMutableTreeNode raiz;
     private DefaultMutableTreeNode carpetaExpresiones;
@@ -53,7 +54,7 @@ public class interfaz extends javax.swing.JFrame {
     private DefaultMutableTreeNode carpetaSiguientes;
     private DefaultMutableTreeNode carpetaTransiciones;
     private DefaultMutableTreeNode carpetaAutomatas;
-
+    public Archivo actual;
     // End of variables declaration       
     
     
@@ -91,24 +92,25 @@ public class interfaz extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        consolaArea = new javax.swing.JTextArea();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        editorArea = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        nuevoItem = new javax.swing.JMenuItem();
+        abrirItem = new javax.swing.JMenuItem();
+        guardarItem = new javax.swing.JMenuItem();
+        guardarComoItem = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-
+        actual= new Archivo("","");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
 
@@ -135,11 +137,11 @@ public class interfaz extends javax.swing.JFrame {
             }
         });
 
-        jTextArea1.setBackground(new java.awt.Color(0, 0, 0));
-        jTextArea1.setColumns(20);
-        jTextArea1.setForeground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setRows(5);
-        jScrollPane4.setViewportView(jTextArea1);
+        consolaArea.setBackground(new java.awt.Color(0, 0, 0));
+        consolaArea.setColumns(20);
+        consolaArea.setForeground(new java.awt.Color(255, 255, 255));
+        consolaArea.setRows(5);
+        jScrollPane4.setViewportView(consolaArea);
 
         jButton3.setText("Anterior");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -162,43 +164,57 @@ public class interfaz extends javax.swing.JFrame {
 
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        jTextArea2.setEditable(true);
-        jTextArea2.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        editorArea.setEditable(true);
+        editorArea.setBackground(new java.awt.Color(255, 255, 255));
+        editorArea.setColumns(20);
+        editorArea.setRows(5);
+        jScrollPane2.setViewportView(editorArea);
 
         jLabel2.setText("Archivo de Entrada: ");
         jLabel2.setForeground(Color.white);
         jLabel3.setText("Salida:");
         jLabel3.setForeground(Color.white);
         jMenu1.setText("Archivo");
+        
+        jLabel4.setForeground(Color.green);
 
-        jMenuItem5.setText("Nuevo Archivo");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        nuevoItem.setText("Nuevo Archivo");
+        guardarItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                guardarItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem5);
+        nuevoItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(nuevoItem);
 
-        jMenuItem1.setText("Abrir");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        abrirItem.setText("Abrir");
+        abrirItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
-                    jMenuItem1ActionPerformed(evt);
+                    abrirItemActionPerformed(evt);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-        jMenu1.add(jMenuItem1);
+        
+        guardarComoItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarComoItemActionPerformed(evt);
+            }
+        });
+        
+        jMenu1.add(abrirItem);
 
-        jMenuItem2.setText("Guardar...");
-        jMenu1.add(jMenuItem2);
+        guardarItem.setText("Guardar...");
+        jMenu1.add(guardarItem);
 
-        jMenuItem3.setText("Guardar Como...");
-        jMenu1.add(jMenuItem3);
+        guardarComoItem.setText("Guardar Como...");
+        jMenu1.add(guardarComoItem);
 
         jMenuItem4.setText("Generar XML");
         jMenu1.add(jMenuItem4);
@@ -208,7 +224,7 @@ public class interfaz extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,7 +246,10 @@ public class interfaz extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(38, 38, 38)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel2)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jLabel4))
                                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 806, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(44, 44, 44)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -252,7 +271,9 @@ public class interfaz extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,9 +300,9 @@ public class interfaz extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>                                               
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) throws FileNotFoundException {                                           
+    private void abrirItemActionPerformed(java.awt.event.ActionEvent evt) throws FileNotFoundException {                                           
         interfaz referencia = this;  
         try {
               // TODO add your handling code here:
@@ -294,12 +315,17 @@ public class interfaz extends javax.swing.JFrame {
                 String strng,texto="";
                 while ((strng = obj.readLine()) != null)
                     texto = texto + strng;
-                jTextArea2.setText(texto);
+                editorArea.setText(texto);
                 String nombre= doc.getName();
                 DefaultMutableTreeNode archivo=new DefaultMutableTreeNode(nombre);
                 carpetaExpresiones.add(archivo);
+                jLabel4.setText(nombre);
+                jTree1.setModel(new DefaultTreeModel(raiz));
+                actual= new Archivo(pat,nombre);
+                obj.close();
             }
-              jTree1.setModel(new DefaultTreeModel(raiz));
+              
+              
           } catch (IOException ex) {
               Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -322,7 +348,7 @@ public class interfaz extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                        
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {                                           
+    private void nuevoItemActionPerformed(java.awt.event.ActionEvent evt) {                                           
         
           try {
               int indice = 1;
@@ -336,6 +362,8 @@ public class interfaz extends javax.swing.JFrame {
                         Archivo a1=new Archivo(ruta+nombre, nombre);
                         DefaultMutableTreeNode archivo=new DefaultMutableTreeNode(nombre);
                         carpetaExpresiones.add(archivo);
+                        jLabel4.setText(nombre);
+                        actual= new Archivo(ruta+nombre,nombre);
                         break;
                    }else{
                         indice++;
@@ -348,11 +376,40 @@ public class interfaz extends javax.swing.JFrame {
           }
     }                                          
     
+    private void guardarItemActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        
+        try(FileWriter fileWriter = new FileWriter(actual.ruta)) {
+        String datos=editorArea.getText();
+        fileWriter.write(datos);
+        fileWriter.close();
+            System.out.println("Archivo guardado");
+            consolaArea.setText("");
+            consolaArea.setText("Archivo Guardado");
+        } catch (IOException e) {
+            System.out.println("No se pudo guardar el archivo");
+        }
+    }
     
-    // Variables declaration - do not modify                                 
+    private void guardarComoItemActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        interfaz referencia = this;  
+        File oldfile = new File(actual.ruta);
+        JFileChooser fileChooser = new JFileChooser();
+               fileChooser.showSaveDialog(referencia);
+               fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+               
+                String pat=fileChooser.getSelectedFile().getPath();
+        File newfile = new File(pat);
+        if (oldfile.renameTo(newfile)) {
+            System.out.println("archivo renombrado");
+            actual.ruta=newfile.getAbsolutePath();
+            actual.nombre=newfile.getName();
+            consolaArea.setText("");
+            consolaArea.setText("Archivo Guardado");
+        } else {
+            System.out.println("error");
+        }
 
- 
-
+    }  
 
 }
 
