@@ -5,15 +5,68 @@
  */
 package compi1;
 
+import java.awt.Color;
+import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
+import compi1.Archivos;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 /**
  *
  * @author steve
  */
 public class interfaz extends javax.swing.JFrame {
+    
+      private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTree jTree1;
+    private DefaultMutableTreeNode raiz;
+    private DefaultMutableTreeNode carpetaExpresiones;
+    private DefaultMutableTreeNode carpetaArboles;
+    private DefaultMutableTreeNode carpetaSiguientes;
+    private DefaultMutableTreeNode carpetaTransiciones;
+    private DefaultMutableTreeNode carpetaAutomatas;
+
+    // End of variables declaration       
+    
+    
     public interfaz() {
+        setTitle("Proyecto 1");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+       
+        setForeground(Color.GRAY);
+        
+         JPanel panel = new JPanel();
+         panel.setBackground(Color.DARK_GRAY);
+         this.setContentPane(panel);
+         panel.setLayout(null);
         initComponents();
     }
 
@@ -25,9 +78,15 @@ public class interfaz extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+        
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        raiz =new DefaultMutableTreeNode("Compi1");
+        carpetaExpresiones =new DefaultMutableTreeNode("Expresiones Regulares");
+        carpetaArboles = new DefaultMutableTreeNode("Arboles"); 
+        carpetaSiguientes = new DefaultMutableTreeNode("Tabla de Siguientes");
+        carpetaTransiciones = new DefaultMutableTreeNode("Tabla de Transiciones");
+        carpetaAutomatas = new DefaultMutableTreeNode("Automatas");
+        jTree1 = new javax.swing.JTree(raiz);
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -53,10 +112,14 @@ public class interfaz extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Empty");
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        
         jScrollPane1.setViewportView(jTree1);
-        jTree1.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(null, false)));
+        raiz.add(carpetaExpresiones);
+        raiz.add(carpetaArboles);
+        raiz.add(carpetaSiguientes);
+        raiz.add(carpetaTransiciones);
+        raiz.add(carpetaAutomatas);
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(raiz));
 
         jButton1.setText("Generar Automatas");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -99,16 +162,16 @@ public class interfaz extends javax.swing.JFrame {
 
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        jTextArea2.setEditable(false);
+        jTextArea2.setEditable(true);
         jTextArea2.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
         jScrollPane2.setViewportView(jTextArea2);
 
         jLabel2.setText("Archivo de Entrada: ");
-
+        jLabel2.setForeground(Color.white);
         jLabel3.setText("Salida:");
-
+        jLabel3.setForeground(Color.white);
         jMenu1.setText("Archivo");
 
         jMenuItem5.setText("Nuevo Archivo");
@@ -122,7 +185,11 @@ public class interfaz extends javax.swing.JFrame {
         jMenuItem1.setText("Abrir");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                try {
+                    jMenuItem1ActionPerformed(evt);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         jMenu1.add(jMenuItem1);
@@ -214,8 +281,29 @@ public class interfaz extends javax.swing.JFrame {
         pack();
     }// </editor-fold>                        
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        // TODO add your handling code here:
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) throws FileNotFoundException {                                           
+        interfaz referencia = this;  
+        try {
+              // TODO add your handling code here:
+              JFileChooser fileChooser = new JFileChooser();
+               fileChooser.showOpenDialog(referencia);
+                String pat=fileChooser.getSelectedFile().getPath();
+              File doc = new File(pat);
+              
+            try (BufferedReader obj = new BufferedReader(new FileReader(doc))) {
+                String strng,texto="";
+                while ((strng = obj.readLine()) != null)
+                    texto = texto + strng;
+                jTextArea2.setText(texto);
+                String nombre= doc.getName();
+                DefaultMutableTreeNode archivo=new DefaultMutableTreeNode(nombre);
+                carpetaExpresiones.add(archivo);
+            }
+              jTree1.setModel(new DefaultTreeModel(raiz));
+          } catch (IOException ex) {
+              Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
+          }
+  
     }                                          
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -235,50 +323,35 @@ public class interfaz extends javax.swing.JFrame {
     }                                        
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        // TODO add your handling code here:
         
+          try {
+              int indice = 1;
+             
+              while(true){
+                   String nombre= "Nuevo"+ indice+".exp";
+                   String ruta="C:\\Users\\steve\\Desktop\\Compiladores\\Proyecto1\\201903974_ExpAnalizer\\Compi1\\Reportes\\EXPRESIONES_201903974\\";
+                   File f = new File(ruta+nombre);
+                   if (!f.exists()) {
+                        f.createNewFile();
+                        Archivo a1=new Archivo(ruta+nombre, nombre);
+                        DefaultMutableTreeNode archivo=new DefaultMutableTreeNode(nombre);
+                        carpetaExpresiones.add(archivo);
+                        break;
+                   }else{
+                        indice++;
+                   }
+                }
+                jTree1.setModel(new DefaultTreeModel(raiz));
+               
+          } catch (IOException ex) {
+              Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
+          }
     }                                          
+    
+    
+    // Variables declaration - do not modify                                 
 
-    /**
-     * @param args the command line arguments
-     */
-
-    public void NuevoArchivo(){
-    
-    }
-    
-    public void AbrirArchivo(){
-    
-    }
-    
-    public void GuardarArchivo(){
-    
-    }
-    // Variables declaration - do not modify                     
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTree jTree1;
-    // End of variables declaration                   
+ 
 
 
 }
