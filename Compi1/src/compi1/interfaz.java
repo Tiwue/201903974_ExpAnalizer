@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -26,7 +27,7 @@ import javax.swing.JFileChooser;
 public class interfaz extends javax.swing.JFrame {
     
       private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton botonAnalizar;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
@@ -90,7 +91,7 @@ public class interfaz extends javax.swing.JFrame {
         jTree1 = new javax.swing.JTree(raiz);
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        botonAnalizar = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         consolaArea = new javax.swing.JTextArea();
         jButton3 = new javax.swing.JButton();
@@ -130,10 +131,10 @@ public class interfaz extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Analizar Entrada");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        botonAnalizar.setText("Analizar Entrada");
+        botonAnalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                botonAnalizarActionPerformed(evt);
             }
         });
 
@@ -242,7 +243,7 @@ public class interfaz extends javax.swing.JFrame {
                                         .addGap(48, 48, 48)
                                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(446, 446, 446)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(botonAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(38, 38, 38)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,7 +292,7 @@ public class interfaz extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(botonAnalizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -336,8 +337,9 @@ public class interfaz extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                        
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    private void botonAnalizarActionPerformed(java.awt.event.ActionEvent evt) {                                         
+       String cadena = editorArea.getText();
+        interpretar(cadena);
     }                                        
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -409,7 +411,19 @@ public class interfaz extends javax.swing.JFrame {
             System.out.println("error");
         }
 
-    }  
+    }
+    
+    private static void interpretar(String texto) {
+        try {
+            Analizadores.Sintactico analizar = new Analizadores.Sintactico(
+                    new Analizadores.Lexico(new BufferedReader(new StringReader(texto))));
+            //analizando
+            analizar.parse();     
+        } catch (Exception ex) {
+            System.out.println("Error fatal en compilación de entrada.");
+            System.out.println("Causa: "+ex.getCause());
+        } 
+    }
 
 }
 
