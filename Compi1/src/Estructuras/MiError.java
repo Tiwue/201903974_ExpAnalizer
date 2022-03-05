@@ -8,7 +8,7 @@ import Estructuras.tipoError;
  *
  * @author steve
  */
-public class Error {
+public class MiError {
     private tipoError tipo;
     private String descripcion;
     private int fila;
@@ -17,7 +17,7 @@ public class Error {
     
     
     
-    public Error(tipoError tipo_, String descripcion_, int fila_, int columna_){
+    public MiError(tipoError tipo_, String descripcion_, int fila_, int columna_){
         setTipo(tipo_);
         setDescripcion(descripcion_);
         setFila(fila_);
@@ -30,8 +30,11 @@ public class Error {
         return "Error{" + "tipo=" + tipo + ", descripcion=" + descripcion + ", fila=" + fila + ", columna=" + columna + '}';
     }
     
-    public tipoError getTipo() {
-        return tipo;
+    public String getTipo() {
+        if(tipo==tipoError.LEXICO){
+            return "Lexico";
+        }
+        return "Sintactico";
     }
 
     public void setTipo(tipoError tipo) {

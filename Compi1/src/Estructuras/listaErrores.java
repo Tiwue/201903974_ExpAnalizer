@@ -8,13 +8,13 @@ import java.util.ArrayList;
  *
  * @author steve
  */
-public class listaErrores extends ArrayList<Error> {
+public class listaErrores extends ArrayList<MiError> {
 
     public listaErrores() {
     super();
     }
     
-    public void addError(Error error){
+    public void addError(MiError error){
         this.add(error);
     }
     

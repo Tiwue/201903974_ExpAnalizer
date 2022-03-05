@@ -11,13 +11,33 @@ import compi1.*;
 import java.util.ArrayList;
 parser code 
 {:
+    private ArrayList<Conjunto> conjuntos = new ArrayList<Conjunto>();
+    private ArrayList<Arbol> arboles = new ArrayList<Arbol>();
+    private ArrayList<Validacion> validaciones = new ArrayList<Validacion>();
+    private int contador=0;
+    private int numeroHoja=1;
+
+    public ArrayList<Arbol> getArboles(){
+        return arboles;
+    };
+
+    public ArrayList<Validacion> getValidaciones(){
+        return validaciones;
+    };
+
+    public ArrayList<Conjunto> getConjuntos(){
+        return conjuntos;
+    };
+    
+
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
         System.out.println("Error Sintáctico en la Línea " + (s.left) +
         " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
-    } 
+        compi1.interfaz.errores.addError(new Estructuras.MiError(tipoError.SINTACTICO, "Se detectó un error sintáctico ("+s.value+")", s.left, s.right));
+    }; 
 
     /**
      * Método al que se llama automáticamente ante algún error sintáctico 
@@ -27,17 +47,17 @@ parser code
         System.out.println("Error síntactico irrecuperable en la Línea " + 
         (s.left)+ " Columna "+s.right+". Componente " + s.value + 
         " no reconocido."); 
-    }  
+        compi1.interfaz.errores.addError(new Estructuras.MiError(tipoError.SINTACTICO, "Se detectó un error sintáctico ("+s.value+")", s.left, s.right));
+    };  
 :} 
-
-
-terminal String CADENA, CHAREX, LLAVE1, LLAVE2, DOSPTS, GUION, FLECHA, MAYORQUE, PTYCOMA;
+ 
+terminal String LLAVE1, LLAVE2, CADENA, CHAREX, CARACTER, DOSPTS, GUION, FLECHA, MAYORQUE, PTYCOMA;
 terminal String PUNTO, OR, PERCENT, MAS, KLEENE, INTERROGACION, RCONJ;
-terminal String COMA, IDENTIFICADOR, DIGITO, LETRA, CARACTER, RANGO1, RANGO2, RANGO3, RANGO4, ESPECIAL;
+terminal String COMA, IDENTIFICADOR, DIGITO, LETRA, RANGO1, RANGO2, RANGO3, RANGO4, ESPECIAL;
 
-non terminal CONJUNTO, CONTENIDOCONJ, PARTE1, PARTE2, VALIDACION, INICIO ;
+non terminal PARTE1, PARTE2, VALIDACION, INICIO,CONJUNTO ;
 non terminal nodoArbol EXPRESION;
-non terminal String REGEX, LISTA;
+non terminal String REGEX, LISTADO,CONTENIDOCONJ;
 
 start with INICIO;
 
@@ -53,31 +73,36 @@ PARTE2::=PARTE2 VALIDACION
             |VALIDACION
             |error;
 
-VALIDACION::= IDENTIFICADOR:v1 DOSPTS CADENA:v2 PTYCOMA {:RESULT=parser.cadenas.add(new Validacion(v1, v2));:};
+CONJUNTO::= RCONJ DOSPTS IDENTIFICADOR:v1 FLECHA CONTENIDOCONJ:v2 PTYCOMA        {:RESULT=parser.conjuntos.add(new Conjunto(v1, v2));:}
+         |RCONJ DOSPTS IDENTIFICADOR:v1 FLECHA LISTADO:v2 PTYCOMA             {:RESULT=parser.conjuntos.add(new Conjunto(v1, v2));:}
+         |RCONJ DOSPTS IDENTIFICADOR:v1 GUION MAYORQUE CONTENIDOCONJ:v2 PTYCOMA        {:RESULT=parser.conjuntos.add(new Conjunto(v1, v2));:}
+         |RCONJ DOSPTS IDENTIFICADOR:v1 GUION MAYORQUE LISTADO:v2 PTYCOMA             {:RESULT=parser.conjuntos.add(new Conjunto(v1, v2));:};
 
-REGEX::=IDENTIFICADOR:v1 FLECHA EXPRESION:v2 PTYCOMA {:parser.arboles.add(parser.nuevoArbol(v1, v2));contador=0;contadorH=1;:};
+CONTENIDOCONJ::=RANGO1:v1           {:RESULT=v1;:}
+            |RANGO2:v1              {:RESULT=v1;:}
+            |RANGO3:v1              {:RESULT=v1;:}
+            |RANGO4:v1              {:RESULT=v1;:};
 
-EXPRESION::= PUNTO EXPRESION:v1 EXPRESION:v2        {:RESULT=new nodoArbol(v1, v2, ".", parser.contador, parser.contadorH);contador++;:}
-            |OR EXPRESION:v1 EXPRESION:v2       {:RESULT=new nodoArbol(v1, v2, "|", parser.contador, parser.contadorH);contador++;:}
-            |MAS EXPRESION:v1                         {:RESULT=new nodoArbol(v1, null, "+", parser.contador, parser.contadorH);contador++;:}
-            |KLEENE EXPRESION:v1                   {:RESULT=new nodoArbol(v1, null, "*", parser.contador, parser.contadorH);contador++;:}
-            |INTERROGACION EXPRESION:v1                    {:RESULT=new nodoArbol(v1, null, "?", parser.contador, parser.contadorH);contador++;:}
-            |CHAREX:v1                              {:RESULT=new nodoArbol(null, null, v1, parser.contador, parser.contadorH);contador++;contadorH++;:}
-            |DIGITO:v1                                   {:RESULT=new nodoArbol(null, null, v1, parser.contador, parser.contadorH);contador++;contadorH++;:}
-            |LLAVE1 IDENTIFICADOR:v1 LLAVE2                      {:RESULT=new nodoArbol(null, null, v1, parser.contador, parser.contadorH);contador++;contadorH++;:}
-            |ESPECIAL:v1                              {:RESULT=new nodoArbol(null, null, v1, parser.contador, parser.contadorH);contador++;contadorH++;:};
-
-CONJUNTO::= RCONJ DOSPTS IDENTIFICADOR:v1 FLECHA CONTENIDOCONJ PTYCOMA      {:RESULT=parser.nombresConj.add(v1);:}
-        | RCONJ DOSPTS IDENTIFICADOR:v1 FLECHA LISTA:v2 PTYCOMA    {:RESULT=parser.listaConj.add(new Conjunto(v1, v2));:};
-
-CONTENIDOCONJ::=RANGO1:v1              {:RESULT=parser.conjuntos.add(v1);:}
-            |RANGO2:v1              {:RESULT=parser.conjuntos.add(v1);:}
-            |RANGO3:v1              {:RESULT=parser.conjuntos.add(v1);:}
-            |RANGO4:v1              {:RESULT=parser.conjuntos.add(v1);:};
-
-LISTA::=LISTA:v1 COMA:v2 DIGITO:v3           {:RESULT=v1+v2+v3;:}
-        |LISTA:v1 COMA:v2 LETRA:v3        {:RESULT=v1+v2+v3;:}
-        |LISTA:v1 COMA:v2 CARACTER:v3          {:RESULT=v1+v2+v3;:}
-        |LETRA:v1                             {:RESULT=v1;:}
+LISTADO::=LISTADO:v1 COMA:v2 DIGITO:v3           {:RESULT=v1+v2+v3;:}
+        |LISTADO:v1 COMA:v2 LETRA:v3             {:RESULT=v1+v2+v3;:}
+        |LISTADO:v1 COMA:v2 CARACTER:v3          {:RESULT=v1+v2+v3;:}
+        |LETRA:v1                                {:RESULT=v1;:}
         |DIGITO:v1                               {:RESULT=v1;:}
-        |CARACTER:v1                               {:RESULT=v1;:};
+        |CARACTER:v1                             {:RESULT=v1;:}
+        |GUION:v1                               {:RESULT=v1;:};
+
+REGEX::=IDENTIFICADOR:v1 FLECHA EXPRESION:v2 PTYCOMA {:parser.arboles.add(new Arbol(v1, new nodoArbol( ".", v2, new nodoArbol( "#", null, null, contador, numeroHoja), contador+1, numeroHoja)));contador=0;numeroHoja=1;:}
+       |IDENTIFICADOR:v1 GUION MAYORQUE EXPRESION:v2 PTYCOMA {:parser.arboles.add(new Arbol(v1, new nodoArbol( ".", v2, new nodoArbol( "#", null, null, contador, numeroHoja), contador+1, numeroHoja)));contador=0;numeroHoja=1;:};
+
+EXPRESION::= PUNTO EXPRESION:v1 EXPRESION:v2        {:RESULT=new nodoArbol( ".", v1, v2, parser.contador, parser.numeroHoja);contador++;:}
+            |OR EXPRESION:v1 EXPRESION:v2           {:RESULT=new nodoArbol( "|", v1, v2, parser.contador, parser.numeroHoja);contador++;:}
+            |MAS EXPRESION:v1                       {:RESULT=new nodoArbol( "+", v1, null, parser.contador, parser.numeroHoja);contador++;:}
+            |KLEENE EXPRESION:v1                    {:RESULT=new nodoArbol( "*", v1, null, parser.contador, parser.numeroHoja);contador++;:}
+            |INTERROGACION EXPRESION:v1             {:RESULT=new nodoArbol( "?", v1, null, parser.contador, parser.numeroHoja);contador++;:}
+            |CHAREX:v1                              {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
+            |DIGITO:v1                              {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
+            |LLAVE1 IDENTIFICADOR:v1 LLAVE2         {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
+            |ESPECIAL:v1                            {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:};
+
+VALIDACION::= IDENTIFICADOR:v1 DOSPTS CADENA:v2 PTYCOMA {:RESULT=parser.validaciones.add(new Validacion(v1, v2));:};
+

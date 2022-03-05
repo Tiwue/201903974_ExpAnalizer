@@ -19,14 +19,18 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java_cup.parser;
 import javax.swing.JFileChooser;
+import java.util.ArrayList;
+import Estructuras.*;
+import java.io.PrintWriter;
 /**
  *
  * @author steve
  */
 public class interfaz extends javax.swing.JFrame {
     
-      private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton botonAnalizar;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -56,6 +60,9 @@ public class interfaz extends javax.swing.JFrame {
     private DefaultMutableTreeNode carpetaTransiciones;
     private DefaultMutableTreeNode carpetaAutomatas;
     public Archivo actual;
+    private ArrayList<Arbol> arboles;
+    public static listaErrores errores;
+            
     // End of variables declaration       
     
     
@@ -164,7 +171,8 @@ public class interfaz extends javax.swing.JFrame {
         jScrollPane5.setViewportView(jLabel1);
 
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
+        jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
         editorArea.setEditable(true);
         editorArea.setBackground(new java.awt.Color(255, 255, 255));
         editorArea.setColumns(20);
@@ -413,16 +421,92 @@ public class interfaz extends javax.swing.JFrame {
 
     }
     
-    private static void interpretar(String texto) {
+    private void interpretar(String texto) {
         try {
-            Analizadores.Sintactico analizar = new Analizadores.Sintactico(
-                    new Analizadores.Lexico(new BufferedReader(new StringReader(texto))));
+            errores = new listaErrores();
+            Analizadores.Sintactico sintactico = new Analizadores.Sintactico(
+            new Analizadores.Lexico(new BufferedReader(new StringReader(texto))));
             //analizando
-            analizar.parse();     
+            sintactico.parse();
+            this.arboles= sintactico.getArboles();
+            imprimir("Analisis hecho");
+            if (errores.isEmpty()){
+                for(int i=0;i<arboles.size();i++){
+                this.arboles.get(i).graficar();
+                }
+            }else{
+                imprimir("Se encontraton Errores en la entrada\n Generando Reporte de  Errores...");
+                generarReporteErrores();
+            }
         } catch (Exception ex) {
             System.out.println("Error fatal en compilación de entrada.");
             System.out.println("Causa: "+ex.getCause());
         } 
+    }
+    
+    public void imprimir(String texto){
+    String cadena=consolaArea.getText();
+    cadena = cadena + "\n"+texto;
+    consolaArea.setText(cadena);
+    }
+
+    public void generarReporteErrores(){
+            String cadena="""
+                          <!DOCTYPE html>
+                          <html lang="en">
+                          <head>
+                            <title>Reporte Errores</title>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1">
+                            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                          </head>
+                          <body>
+                          
+                          <div class="container" align="center">
+                            <h2>Reporte de Errores</h2>
+                            <p></p>
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Tipo de Error</th>
+                                  <th>Descripcion</th>
+                                  <th>Linea</th>
+                                  <th>Columna</th>
+                                </tr>
+                              </thead>
+                              <tbody>""";
+            for(int i=0;i<errores.size();i++){
+                        cadena= cadena + "\n<tr>";
+                        int numero=i+1;
+                        cadena = cadena + "\n<td>"+ numero +"</td>";
+                        cadena = cadena + "\n<td>"+errores.get(i).getTipo()+"</td>";
+                        cadena = cadena + "\n<td>"+errores.get(i).getDescripcion()+"</td>";
+                        cadena = cadena + "\n<td>"+errores.get(i).getFila()+"</td>";
+                        cadena = cadena + "\n<td>"+errores.get(i).getColumna()+"</td>";
+                        cadena = cadena + "\n</tr>";
+                    }
+            cadena = cadena + "</tbody>\n" + "  </table>\n" + "</div>\n" + "\n" + "</body>\n" + "</html>";
+            FileWriter archivo = null;
+            PrintWriter print = null;
+                try {
+                    archivo = new FileWriter("./Reportes\\\\ERRORES_201903974\\\\ERRORES.html");
+                    print = new PrintWriter(archivo);
+                    print.println(cadena);
+                } catch (IOException e) {
+                }finally{
+                    if(archivo!=null){
+                        try {
+                            archivo.close();
+                            imprimir("Reporte de errores generado");
+                        } catch (IOException ex) {
+                            Logger.getLogger(interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                    }
+                }
     }
 
 }
