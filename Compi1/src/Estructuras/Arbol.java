@@ -110,7 +110,7 @@ public class Arbol {
         if(this.raiz.left == null && this.raiz.right == null){
             cadena+=this.raiz.numero;
         }
-        cadena+="}|{"+this.raiz.ultimos.toString().substring(1,raiz.primeros.toString().length()-1)+"}\"];\n";
+        cadena+="}|{"+this.raiz.ultimos.toString().substring(1,raiz.ultimos.toString().length()-1)+"}\"];\n";
         if(raiz.left != null){
             cadena+=nodosGrafica_intern(raiz.left)+"nodo"+raiz.identificador+"->nodo"+raiz.left.identificador+";\n";
         }

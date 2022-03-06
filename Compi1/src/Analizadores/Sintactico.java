@@ -198,8 +198,6 @@ public class Sintactico extends java_cup.runtime.lr_parser {
     private int contador=0;
     private int numeroHoja=1;
 
-
-
     public ArrayList<Arbol> getArboles(){
         return arboles;
     };
