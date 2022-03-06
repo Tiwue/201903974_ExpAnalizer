@@ -433,6 +433,7 @@ public class interfaz extends javax.swing.JFrame {
             if (errores.isEmpty()){
                 for(int i=0;i<arboles.size();i++){
                 this.arboles.get(i).graficar();
+                this.arboles.get(i).generarTablaSiguientes();
                 }
             }else{
                 imprimir("Se encontraton Errores en la entrada\n Generando Reporte de  Errores...");

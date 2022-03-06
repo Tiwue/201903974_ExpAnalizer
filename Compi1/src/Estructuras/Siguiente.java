@@ -9,19 +9,29 @@ import java.util.ArrayList;
  * @author steve
  */
 public class Siguiente {
-     private String nodo;
-    private ArrayList<Integer> siguiente;
+     private String hoja;
+     private int numHoja;
+    private ArrayList<Integer> siguientes;
 
-    public Siguiente(String nodo) {
-        this.nodo = nodo;
-        this.siguiente = new ArrayList<Integer>();
+    public Siguiente(String nodo, int numHoja) {
+        this.hoja = nodo;
+        this.numHoja = numHoja;
+        this.siguientes = new ArrayList<Integer>();
     }
 
-    public ArrayList<Integer> getSiguiente() {
-        return siguiente;
+    public ArrayList<Integer> getSiguientes() {
+        return siguientes;
     }
     
     public String getNodo(){
-        return nodo;
+        return hoja;
+    }
+    
+    public int getNum(){
+        return numHoja;
+    }
+    
+    public void setSiguiente(int siguiente){
+    this.siguientes.add(siguiente);
     }
 }

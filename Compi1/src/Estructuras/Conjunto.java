@@ -15,15 +15,11 @@ public class Conjunto {
     public Conjunto(String nombre, String cadena){
         this.nombre = nombre;
         this.caracteres = new ArrayList<Character>();
-        if(cadena.length()>3){
-            for(int i=0; i<cadena.length();i+=2){
-                caracteres.add(cadena.charAt(i));
-            }
-        }else{
-            char e1 = cadena.charAt(0);
-            char e2 = cadena.charAt(2);
-            for(int i=e1;i<=e2;i++){
-                if(e1!=48 && e1!=65 && e1!=97){
+        if(cadena.length()==3){
+            char ch1 = cadena.charAt(0);
+            char ch2 = cadena.charAt(2);
+            for(int i=ch1;i<=ch2;i++){
+                if(ch1!=48 && ch1!=65 && ch1!=97){
                     if(i>=48 && i<=57){
                     continue;
                     }else if(i>=65 && i<=90){
@@ -34,14 +30,20 @@ public class Conjunto {
                 }
                 caracteres.add((char)i);
             }
-        }
+        }else
+        {
+            for(int i=0; i<cadena.length();i++){
+                if(cadena.charAt(i)!=','&& cadena.charAt(i)!=' '){
+                    caracteres.add(cadena.charAt(i));
+            }}}
+    
     }
-
+    
     public String getNombre() {
         return nombre;
     }
 
-    public ArrayList<Character> getElementos() {
+    public ArrayList<Character> getCaracteres() {
         return caracteres;
     }
     

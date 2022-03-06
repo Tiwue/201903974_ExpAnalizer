@@ -101,23 +101,23 @@ public class nodoArbol {
         return numero;
     }    
 
-    public nodoArbol getLs() {
+    public nodoArbol getLeft() {
         return left;
     }
 
-    public nodoArbol getRs() {
+    public nodoArbol getRight() {
         return right;
     }
 
-    public ArrayList<Integer> getFirightt() {
+    public ArrayList<Integer> getPrimeros() {
         return primeros;
     }
 
-    public ArrayList<Integer> getLast() {
+    public ArrayList<Integer> getUltimos() {
         return ultimos;
     }
 
-    public int getId() {
+    public int getIdentificador() {
         return identificador;
     }
     
