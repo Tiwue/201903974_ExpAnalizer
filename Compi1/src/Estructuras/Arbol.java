@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Analizadores.Sintactico;
 /**
  *
  * @author steve
@@ -16,17 +17,17 @@ import java.util.logging.Logger;
 public class Arbol {
     private nodoArbol raiz;
     private String nombre;
-    private ArrayList<Siguiente> siguientes;
+    private listaSiguientes siguientes;
     private ArrayList<Estado> estados;
-    private ArrayList<String> terminales;
-    private AFND afnd;
+    private ArrayList<String> terminalesG;
+    private AFD determinista;
     
     public Arbol(String nombre, nodoArbol raiz){
         this.nombre = nombre;
         this.raiz = raiz;
-        siguientes = new ArrayList<Siguiente>();
+        siguientes = new listaSiguientes();
         estados = new ArrayList<Estado>();
-        terminales = new ArrayList<String>();
+        terminalesG = new ArrayList<String>();
     }
 
     public nodoArbol getRaiz() {
@@ -204,6 +205,69 @@ public class Arbol {
         
     }
     
+    public void generarTablaTransiciones(){
+    buscarTerminalesG();
+    setTransiciones();
+    String cadena="digraph G{\na[shape=none label=<\n<TABLE cellspacing=\"0\">\n<TR>\n\n<TD rowspan=\"2\">Estado</TD>\n<TD colspan=\"";
+    cadena += terminalesG.size();
+    cadena +="\" >Terminales</TD>\n</TR><TR>\n";
+    for(String terminal:terminalesG){
+    cadena+="<TD>"+terminal+"</TD>";
+    }
+    cadena+= "\n</TR>";
+    for(Estado estado:estados){
+    cadena+="<TR>\n<TD>"+estado.getNombre()+" "+estado.getHojas().toString()+ "</TD>";
+    for(String terminal:terminalesG){
+        Transicion t = obtenerTransicion(estado, terminal);
+        if(t!=null){
+        cadena+="\n<TD>"+t.getSigueinte()+"</TD>";
+        }else{
+        cadena+="\n<TD>--</TD>";
+        }
+    }
+    cadena+="\n</TR>";
+    }
+    cadena+="</TABLE>\n>];\n        \n        \n    }";
+    
+    FileWriter archivo = null;
+        PrintWriter escribir = null;
+        try{
+            archivo = new FileWriter("./Reportes\\TRANSICIONES_201903974\\Transiciones"+this.nombre+".dot");
+            escribir = new PrintWriter(archivo);
+            escribir.println(cadena);
+ 
+        }catch (Exception e){
+            System.out.println("No se pudo generar la tabla de siguientes...");
+            e.printStackTrace();
+        }finally{
+            try{
+                if(null != archivo){
+                    archivo.close();
+                }
+            }catch(Exception e2){
+                e2.printStackTrace();
+            }
+        }
+        try{
+            String comando = "dot";
+            String rutaDot = "./Reportes\\TRANSICIONES_201903974\\Transiciones"+this.nombre+".dot";
+            String rutaJPG = "./Reportes\\TRANSICIONES_201903974\\Transiciones_"+this.nombre+".png";
+            String tParam = "-Tpng";
+            String tOParam = "-o";
+            String[] cmd = new String[5];
+            cmd[0] = comando;
+            cmd[1] = tParam;
+            cmd[2] = rutaDot;
+            cmd[3] = tOParam;
+            cmd[4] = rutaJPG;
+            
+            Runtime.getRuntime().exec(cmd);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    
+    }
+    
     
     public void setSiguientes(nodoArbol actual){
         if(actual.getLeft()!=null){
@@ -252,7 +316,148 @@ public class Arbol {
         }
     }
     
+     public void setTransiciones(){
+        int contador = 0;
+        estados.add(new Estado("S"+contador, raiz.getPrimeros(),contador));
+        contador++;
+        int i =0;
+        while(i<estados.size()){
+            Estado estado = estados.get(i);
+            
+            ArrayList<String> terminales=getTerminales(estado.getHojas());    
+            for (String terminal: terminales){
+                if(!terminal.equals("#")){
+                ArrayList<Integer> newSigs = concatenarSiguientes(estado.getHojas(), terminal);
+
+                    if(!estadoExiste(newSigs)){
+                        Estado nuevo = new Estado("S"+contador,newSigs,contador);
+                        estados.add(nuevo);
+                        for(Estado estate:estados){
+                            if(estate.getNumero()==contador-1){
+                              estate.setTransicion(new Transicion(estate.getNombre(),terminal,nuevo.getNombre()));
+                            }
+                        }
+                        contador++;
+
+                    }else{
+                        Estado nuevo= returnEstado(newSigs) ;
+                        for(Estado estate:estados){
+                            if(estate.getNumero()==contador-1){
+
+                              estate.setTransicion(new Transicion(estate.getNombre(),terminal,nuevo.getNombre()));
+                            }
+                        }
+                    }
+                
+                }
+            
+            }
+            estados.set(i,estado);   
+            i++;
+        
+        }   
+    }
+    
+    public String getDestino(ArrayList<Integer> lista){
+        for(Estado estado:estados){
+            if(estado.getHojas().equals(lista)){
+                return estado.getNombre();
+            }
+        }
+        return null;
+    }
+    
+    public ArrayList<Integer> concatenarSiguientes(ArrayList<Integer> hojas, String terminal){
+        ArrayList<Integer> nexts = new ArrayList<>();
+        for(Integer hoja:hojas){
+            for( Siguiente siguiente:siguientes){
+                if (siguiente.getNum()==hoja){
+                    if(siguiente.getNodo().equals(terminal)){
+                        for(Integer hojita: siguiente.getSiguientes()){
+                            if(!nexts.contains(hojita)){
+                                
+                                    nexts.add(hojita);
+                                
+                            }
+                        }
+                    }
+                }
+            }
+            
+            }
+        return nexts;
+        }
     
     
+    public ArrayList<String> getTerminales(ArrayList<Integer> hojas){
+        ArrayList<String> terminales = new ArrayList<String>();
+        for(Integer hoja: hojas){    
+            for(Siguiente siguiente:siguientes){
+                if(siguiente.getNum()==hoja && !terminales.contains(siguiente.getNodo())){
+                    
+                    terminales.add(siguiente.getNodo());
+                }
+            }
+        }
+        return terminales;
+    }
     
+    public boolean estadoExiste(ArrayList<Integer> lista){
+        for(Estado estado:estados){
+            if(estado.getHojas().equals(lista)){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public Estado returnEstado(ArrayList<Integer> lista){
+        for(Estado estado:estados){
+            if(estado.getHojas().equals(lista)){
+                return estado;
+            }
+        }
+        return null;
+    }
+    
+    public Transicion obtenerTransicion(Estado e, String terminal){
+        for(Transicion t:e.getTransiciones()){
+            if(t.getTerminal().equals(terminal)){
+                return t;
+            }
+        }
+        return null;
+    }
+    
+    public void buscarTerminalesG(){
+        for(Siguiente siguiente:siguientes){
+            if(!terminalesG.contains(siguiente.getNodo())){
+                if(!siguiente.getNodo().equals("#"))
+                 terminalesG.add(siguiente.getNodo());
+            }
+        }
+    }
+    
+    public void crearAFD(ArrayList<Conjunto> Conjuntos){
+    Estado inicial;
+    inicial = estados.get(0);
+    ArrayList<Estado> aceptaciones = new ArrayList<Estado>();
+    int numAceptacion=1;
+    for(Siguiente siguiente:siguientes){
+        if(siguiente.getNodo().equals("#")){
+         numAceptacion = siguiente.getNum();
+        }
+    }
+    
+    for(Estado estado:estados){
+        if(estado.getHojas().contains(numAceptacion)){
+                aceptaciones.add(estado);
+            }
+    }
+    
+    
+    this.determinista=new AFD(this.nombre,this.estados,inicial,this.terminalesG,aceptaciones,Conjuntos);
+    this.determinista.graficar();
+    }
 }

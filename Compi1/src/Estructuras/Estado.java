@@ -10,25 +10,27 @@ import java.util.ArrayList;
  */
 public class Estado {
     private String nombre;
-    private ArrayList<Integer> content;
+    private int numero;
+    private ArrayList<Integer> hojas;
     private ArrayList<Transicion> transiciones;
     
-    public Estado(String nombre, ArrayList<Integer> content){
+    public Estado(String nombre, ArrayList<Integer> hojas, int numero){
         this.nombre = nombre;
-        this.content = content;
-        transiciones = new ArrayList<Transicion>();
+        this.hojas = hojas;
+        this.transiciones = new ArrayList<Transicion>();
+        this.numero=numero;
     }
     
-    public Estado(String nombre){
-        this(nombre, new ArrayList<Integer>());
+    public int getNumero(){
+        return numero;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public ArrayList<Integer> getContent() {
-        return content;
+    public ArrayList<Integer> getHojas() {
+        return hojas;
     }
 
     public ArrayList<Transicion> getTransiciones() {
@@ -42,5 +44,9 @@ public class Estado {
             }
         }
         return "";
+    }
+    
+    public void setTransicion(Transicion transicion){
+     this.transiciones.add(transicion); 
     }
 }

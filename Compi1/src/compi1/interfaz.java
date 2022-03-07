@@ -62,6 +62,7 @@ public class interfaz extends javax.swing.JFrame {
     public Archivo actual;
     private ArrayList<Arbol> arboles;
     public static listaErrores errores;
+    private ArrayList<Conjunto> conjuntos;
             
     // End of variables declaration       
     
@@ -429,12 +430,15 @@ public class interfaz extends javax.swing.JFrame {
             //analizando
             sintactico.parse();
             this.arboles= sintactico.getArboles();
+            this.conjuntos = sintactico.getConjuntos();
             imprimir("Analisis hecho");
             if (errores.isEmpty()){
                 for(int i=0;i<arboles.size();i++){
                 this.arboles.get(i).graficar();
                 this.arboles.get(i).generarTablaSiguientes();
-                }
+                this.arboles.get(i).generarTablaTransiciones();
+                this.arboles.get(i).crearAFD(conjuntos);
+                } 
             }else{
                 imprimir("Se encontraton Errores en la entrada\n Generando Reporte de  Errores...");
                 generarReporteErrores();
