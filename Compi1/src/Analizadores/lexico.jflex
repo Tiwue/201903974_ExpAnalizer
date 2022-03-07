@@ -16,11 +16,14 @@ import Estructuras.*;
 %init} 
 
 ESPACIOS = [ \r\t]+
-DIGITO= [0-9]+
+DIGITO= [0-9]
 LETRA = [a-z]|[A-Z]
 CARACTER = [ -}]
-CHAREX = [\"][^\"][\"]
+
 ESPECIALES = ("\\n"|"\\""\'"|"\\""\"")
+ESPECIALCOMILLAS = [\"][[\\n]|[\\\'][\\\"]][\"]
+CHAREX = [\"][^\"][\"]
+
 CADENA = [\"]([^\"\n]|(\\\"))*[\"]
 IDENTIFICADOR=[a-zA-Z]+["_"a-z0-9A-Z]*      
 RANGO1 = [0-9]+"~"[0-9]+
@@ -43,7 +46,8 @@ COMENTARIOMULTI = "<!""!"*([^!>])*"!"*"!>"
 {COMENTARIO}      {}
 {COMENTARIOMULTI} {}
 "{"             {return new Symbol(sym.LLAVE1, yyline, yychar, yytext());}
-"}"             {return new Symbol(sym.LLAVE2, yyline, yychar, yytext());}                 
+"}"             {return new Symbol(sym.LLAVE2, yyline, yychar, yytext());}  
+"\""            {return new Symbol(sym.COMILLAS, yyline, yychar, yytext());}   
 ":"             {return new Symbol(sym.DOSPTS, yyline, yychar, yytext());}
 "-"             {return new Symbol(sym.GUION, yyline, yychar, yytext());}
 ">"             {return new Symbol(sym.MAYORQUE, yyline, yychar, yytext());}
@@ -60,10 +64,14 @@ COMENTARIOMULTI = "<!""!"*([^!>])*"!"*"!>"
 {DIGITO}        {return new Symbol(sym.DIGITO, yyline, yychar, yytext());}
 {LETRA}         {return new Symbol(sym.LETRA, yyline, yychar, yytext());}
 {IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yyline, yychar, yytext());}
+
 {CARACTER}      {return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
 {CHAREX}        {return new Symbol(sym.CHAREX, yyline, yychar, (yytext()).substring(1,yytext().length()-1));}
-{CADENA}        {return new Symbol(sym.CADENA, yyline, yychar, (yytext()).substring(1,yytext().length()-1));}
+{ESPECIALCOMILLAS} {return new Symbol(sym.ESPECIALCOMILLAS, yyline, yychar, yytext());}
+
+
 {ESPECIALES}    {return new Symbol(sym.ESPECIAL, yyline, yychar, yytext());}
+{CADENA}        {return new Symbol(sym.CADENA, yyline, yychar, (yytext()).substring(1,yytext().length()-1));}
 {RANGO1}        {return new Symbol(sym.RANGO1, yyline, yychar, yytext());}
 {RANGO2}        {return new Symbol(sym.RANGO2, yyline, yychar, yytext());}
 {RANGO3}        {return new Symbol(sym.RANGO3, yyline, yychar, yytext());}

@@ -66,7 +66,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTree1);
         jTree1.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(null, false)));
 
-        jButton1.setText("Generar Automatas");
+        jButton1.setText("Validar Cadenas");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);

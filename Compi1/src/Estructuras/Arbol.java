@@ -337,7 +337,7 @@ public class Arbol {
                               estate.setTransicion(new Transicion(estate.getNombre(),terminal,nuevo.getNombre()));
                             }
                         }
-                        contador++;
+                        
 
                     }else{
                         Estado nuevo= returnEstado(newSigs) ;
@@ -352,7 +352,7 @@ public class Arbol {
                 }
             
             }
-            estados.set(i,estado);   
+            contador++;
             i++;
         
         }   
@@ -459,5 +459,9 @@ public class Arbol {
     
     this.determinista=new AFD(this.nombre,this.estados,inicial,this.terminalesG,aceptaciones,Conjuntos);
     this.determinista.graficar();
+    }
+    
+    public AFD getDeterminista(){
+        return this.determinista;
     }
 }

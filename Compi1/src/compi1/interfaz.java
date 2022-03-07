@@ -63,6 +63,8 @@ public class interfaz extends javax.swing.JFrame {
     private ArrayList<Arbol> arboles;
     public static listaErrores errores;
     private ArrayList<Conjunto> conjuntos;
+    private ArrayList<AFD> deterministas;
+    private ArrayList<Validacion> validaciones;
             
     // End of variables declaration       
     
@@ -132,7 +134,7 @@ public class interfaz extends javax.swing.JFrame {
         raiz.add(carpetaAutomatas);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(raiz));
 
-        jButton1.setText("Generar Automatas");
+        jButton1.setText("Validar Cadenas");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -343,7 +345,16 @@ public class interfaz extends javax.swing.JFrame {
     }                                          
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+        if(this.deterministas!=null){
+           if(!this.deterministas.isEmpty()){
+             generarJSON();
+           }else{
+               imprimir("Debe generar automatas primero");
+           }
+        }else{
+             imprimir("Debe generar automatas primero");
+        }
+       
     }                                        
 
     private void botonAnalizarActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -424,13 +435,16 @@ public class interfaz extends javax.swing.JFrame {
     
     private void interpretar(String texto) {
         try {
+            
             errores = new listaErrores();
+            deterministas = new ArrayList<AFD>();
             Analizadores.Sintactico sintactico = new Analizadores.Sintactico(
             new Analizadores.Lexico(new BufferedReader(new StringReader(texto))));
             //analizando
             sintactico.parse();
             this.arboles= sintactico.getArboles();
             this.conjuntos = sintactico.getConjuntos();
+            this.validaciones = sintactico.getValidaciones();
             imprimir("Analisis hecho");
             if (errores.isEmpty()){
                 for(int i=0;i<arboles.size();i++){
@@ -438,6 +452,7 @@ public class interfaz extends javax.swing.JFrame {
                 this.arboles.get(i).generarTablaSiguientes();
                 this.arboles.get(i).generarTablaTransiciones();
                 this.arboles.get(i).crearAFD(conjuntos);
+                this.deterministas.add(this.arboles.get(i).getDeterminista());
                 } 
             }else{
                 imprimir("Se encontraton Errores en la entrada\n Generando Reporte de  Errores...");
@@ -513,6 +528,63 @@ public class interfaz extends javax.swing.JFrame {
                     }
                 }
     }
-
+    
+    
+    public void generarJSON(){
+        
+        FileWriter archivo = null;
+        String cadena = "[\n";
+        boolean encontrada = false;
+        for(Validacion validacion: this.validaciones){
+            encontrada = false;
+            for(AFD automata:this.deterministas){
+                if(automata.getNombre().equals(validacion.getNombre())){
+                    cadena+="  {\n";
+                    cadena+="      \"Valor\":\""+validacion.getCadena().replace("\\'", "\\\\'").replace("\\\"", "\\\\\\\"").replace("\\n", "\\\\n")+"\",\n";
+                    cadena+="      \"ExpresionRegular\":\""+validacion.getNombre()+"\",\n";
+                    if(automata.validarCadena(validacion.getCadena())){
+                        cadena+="      \"Resultado\":\"Cadena Valida\"\n";
+                        imprimir("La cadena: "+validacion.getCadena()+", es valida con la expresion: "+validacion.getNombre()+".\n");
+                    }else{
+                        cadena+="      \"Resultado\":\"Cadena No Valida\"\n";
+                        imprimir("La cadena: "+validacion.getCadena()+",NO es valida con la expresion: "+validacion.getNombre()+".\n");
+                    }
+                    cadena+="  },\n";
+                    encontrada = true;
+                }
+            }
+            if(!encontrada){
+                imprimir("La cadena: "+validacion.getCadena()+", no pudo ser analizada con el siguiente automata: "+validacion.getNombre()+".\n");
+            }
+        }
+        cadena+="\n]";
+         try {
+            if (actual!=null){
+                archivo = new FileWriter("./Reportes/SALIDAS_201903974/SALIDA-"+this.actual.getNombre()+".json");
+            } else{
+            
+            archivo = new FileWriter("./Reportes/SALIDAS_201903974/SALIDA-"+this.actual.getNombre()+".json");
+            }
+            archivo.write(cadena);
+            imprimir("JSON generado.");
+        } catch (Exception e) {
+            e.printStackTrace();
+ 
+        } finally {
+ 
+            try {
+                archivo.flush();
+                archivo.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+         imprimir("Analisis de validaciones terminado.");
+        
+    }    
+    
+    
+    
 }
 

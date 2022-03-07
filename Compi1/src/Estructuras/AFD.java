@@ -17,6 +17,7 @@ public class AFD {
     private ArrayList<Estado> aceptaciones;
     private ArrayList<String> terminales;
     private ArrayList<Conjunto> conjuntos;
+    private Estado currentStateAux;
 
     public AFD(String nombre, ArrayList<Estado> estados, Estado inicial, ArrayList<String> terminales, ArrayList<Estado> aceptaciones, ArrayList<Conjunto> conjuntos){
         this.nombre = nombre;
@@ -87,6 +88,82 @@ public class AFD {
         }
     
     }
-
+    
+    public boolean validarCadena(String cadena){
+        this.currentStateAux = this.inicial;
+        boolean valida = false;
+        for(int i=0; i<cadena.length();i++){
+            if(cadena.charAt(i) == '\\'){
+                if(cadena.charAt(i+1)=='\'' || cadena.charAt(i+1) == '\"' || cadena.charAt(i+1) == 'n'){
+                    i++;
+                }
+            }
+            
+            valida = verificarenTransiciones(cadena.charAt(i),i);
+            if(!valida){
+                return false;
+            }
     }
+        if(valida){
+            if(aceptaciones.contains(currentStateAux)){
+                return true;
+            }
+        }
+        return false;
+}
+    
+         public boolean verificarenTransiciones(char caracter, int i ){
+                for(Transicion transicion: currentStateAux.getTransiciones()){
+                    if(transicion.getTerminal().length()>1){
+                        if(transicion.getTerminal().equals("\\'") || transicion.getTerminal().equals("\\\"")|| transicion.equals("\\n")){
+                           if(caracter == transicion.getTerminal().charAt(1)){
+                               for(Estado estado:estados){
+                                    if(estado.getNombre().equals(transicion.getSigueinte())){
+                                        currentStateAux = estado;
+                                        break;
+                                    }
+                               }
+                               return true;
+                           }    
+                        }else{
+                               for(Conjunto conjunto: conjuntos){
+                                   if(conjunto.getNombre().equals(transicion.getTerminal())){
+                                       if(conjunto.getCaracteres().contains(caracter)){
+                                            for(Estado estado:estados){
+                                                if(estado.getNombre().equals(transicion.getSigueinte())){
+                                                       currentStateAux = estado;
+                                                        break;
+                                                }
+                                            }
+                                            return true;
+                                       }
+                                   }
+                               }
+                           }
+                        }else{
+                            if(transicion.getTerminal().equals(Character.toString(caracter))){
+                               for(Estado estado:estados){
+                               if(estado.getNombre().equals(transicion.getSigueinte())){
+                                   currentStateAux = estado;
+                                   break;
+                               }
+                               }
+                               return true;
+                           }
+                    }
+                    }
+               
+        return false;
+         } 
+
+         public String getNombre(){
+             return this.nombre;
+         }
+
+}
+
+    
+   
+    
+    
 

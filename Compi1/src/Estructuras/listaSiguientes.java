@@ -16,13 +16,15 @@ public class listaSiguientes extends ArrayList<Siguiente>{
 
     
     public Siguiente getSiguiente(int numHoja){
-    
-        this.forEach((Siguiente t) -> {
-        if(t.getNum()==numHoja){
-            return t;
+        
+        for(Siguiente siguiente:this){
+        if(siguiente.getNum()==numHoja){
+            return siguiente;
         }
-        });
+        }
+        
         return null;
+        
     }
     
 };

@@ -17,7 +17,7 @@ public class Validacion {
         this.cadena = cadena;
     }
 
-    public String getExpresion() {
+    public String getNombre() {
         return nombre;
     }
 

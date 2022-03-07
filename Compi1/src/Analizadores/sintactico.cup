@@ -51,9 +51,9 @@ parser code
     };  
 :} 
  
-terminal String LLAVE1, LLAVE2, CADENA, CHAREX, CARACTER, DOSPTS, GUION, FLECHA, MAYORQUE, PTYCOMA;
+terminal String LLAVE1, LLAVE2, COMILLAS, CADENA, CHAREX, CARACTER, ESPECIAL, ESPECIALCOMILLAS,DOSPTS, GUION, FLECHA, MAYORQUE, PTYCOMA;
 terminal String PUNTO, OR, PERCENT, MAS, KLEENE, INTERROGACION, RCONJ;
-terminal String COMA, IDENTIFICADOR, DIGITO, LETRA, RANGO1, RANGO2, RANGO3, RANGO4, ESPECIAL;
+terminal String COMA, IDENTIFICADOR, DIGITO, LETRA, RANGO1, RANGO2, RANGO3, RANGO4 ;
 
 non terminal PARTE1, PARTE2, VALIDACION, INICIO,CONJUNTO ;
 non terminal nodoArbol EXPRESION;
@@ -89,7 +89,10 @@ LISTADO::=LISTADO:v1 COMA:v2 DIGITO:v3           {:RESULT=v1+v2+v3;:}
         |LETRA:v1                                {:RESULT=v1;:}
         |DIGITO:v1                               {:RESULT=v1;:}
         |CARACTER:v1                             {:RESULT=v1;:}
+        |ESPECIAL:v1                             {:RESULT=v1;:}
+        |ESPECIALCOMILLAS:v1                     {:RESULT=v1;:}
         |GUION:v1                               {:RESULT=v1;:};
+        
 
 REGEX::=IDENTIFICADOR:v1 FLECHA EXPRESION:v2 PTYCOMA {:parser.arboles.add(new Arbol(v1, new nodoArbol( ".", v2, new nodoArbol( "#", null, null, contador, numeroHoja), contador+1, numeroHoja)));contador=0;numeroHoja=1;:}
        |IDENTIFICADOR:v1 GUION MAYORQUE EXPRESION:v2 PTYCOMA {:parser.arboles.add(new Arbol(v1, new nodoArbol( ".", v2, new nodoArbol( "#", null, null, contador, numeroHoja), contador+1, numeroHoja)));contador=0;numeroHoja=1;:};
@@ -102,7 +105,10 @@ EXPRESION::= PUNTO EXPRESION:v1 EXPRESION:v2        {:RESULT=new nodoArbol( ".",
             |CHAREX:v1                              {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
             |DIGITO:v1                              {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
             |LLAVE1 IDENTIFICADOR:v1 LLAVE2         {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
+            |ESPECIALCOMILLAS:v1                    {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:}
             |ESPECIAL:v1                            {:RESULT=new nodoArbol(v1, null, null, parser.contador, parser.numeroHoja);contador++;numeroHoja++;:};
 
-VALIDACION::= IDENTIFICADOR:v1 DOSPTS CADENA:v2 PTYCOMA {:RESULT=parser.validaciones.add(new Validacion(v1, v2));:};
+VALIDACION::= IDENTIFICADOR:v1 DOSPTS CADENA:v2 PTYCOMA {:RESULT=parser.validaciones.add(new Validacion(v1, v2));:}
+            |IDENTIFICADOR:v1 DOSPTS CHAREX:v2 PTYCOMA {:RESULT=parser.validaciones.add(new Validacion(v1, v2));:}
+            |IDENTIFICADOR:v1 DOSPTS COMILLAS LETRA:v2 COMILLAS PTYCOMA {:RESULT=parser.validaciones.add(new Validacion(v1, v2));:};
 
