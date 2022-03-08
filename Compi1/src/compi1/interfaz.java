@@ -326,7 +326,7 @@ public class interfaz extends javax.swing.JFrame {
             try (BufferedReader obj = new BufferedReader(new FileReader(doc))) {
                 String strng,texto="";
                 while ((strng = obj.readLine()) != null)
-                    texto = texto + strng;
+                    texto = texto + strng+"\n";
                 editorArea.setText(texto);
                 String nombre= doc.getName();
                 DefaultMutableTreeNode archivo=new DefaultMutableTreeNode(nombre);
@@ -459,7 +459,7 @@ public class interfaz extends javax.swing.JFrame {
                 generarReporteErrores();
             }
         } catch (Exception ex) {
-            System.out.println("Error fatal en compilación de entrada.");
+            System.out.println("No se pudo realizar el analisis");
             System.out.println("Causa: "+ex.getCause());
         } 
     }

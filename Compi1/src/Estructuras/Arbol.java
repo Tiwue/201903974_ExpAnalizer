@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import Analizadores.Sintactico;
+import compi1.interfaz;
 /**
  *
  * @author steve
@@ -318,23 +318,28 @@ public class Arbol {
     
      public void setTransiciones(){
         int contador = 0;
+        int contadorEstados=0;
         estados.add(new Estado("S"+contador, raiz.getPrimeros(),contador));
         contador++;
+        contadorEstados++;
         int i =0;
         while(i<estados.size()){
             Estado estado = estados.get(i);
             
             ArrayList<String> terminales=getTerminales(estado.getHojas());    
+            
             for (String terminal: terminales){
                 if(!terminal.equals("#")){
                 ArrayList<Integer> newSigs = concatenarSiguientes(estado.getHojas(), terminal);
 
                     if(!estadoExiste(newSigs)){
-                        Estado nuevo = new Estado("S"+contador,newSigs,contador);
+                        
+                        Estado nuevo = new Estado("S"+contadorEstados,newSigs,contadorEstados);
                         estados.add(nuevo);
                         for(Estado estate:estados){
                             if(estate.getNumero()==contador-1){
                               estate.setTransicion(new Transicion(estate.getNombre(),terminal,nuevo.getNombre()));
+                             contadorEstados++;
                             }
                         }
                         
@@ -345,12 +350,14 @@ public class Arbol {
                             if(estate.getNumero()==contador-1){
 
                               estate.setTransicion(new Transicion(estate.getNombre(),terminal,nuevo.getNombre()));
+                              
                             }
+                            
                         }
                     }
                 
                 }
-            
+                
             }
             contador++;
             i++;
