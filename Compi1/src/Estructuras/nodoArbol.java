@@ -24,31 +24,19 @@ public class nodoArbol {
         this.right = right_;
         this.valor = valor_;
         this.identificador = identificador_;
-        this.numero=numero_;
         this.primeros = new ArrayList<Integer>();
         this.ultimos = new ArrayList<Integer>();
         this.setAnulabilidadPrimerosUltimos(valor_, left_, right_, identificador_, numero_);
     }
     
     public void setAnulabilidadPrimerosUltimos(String valor_, nodoArbol left_, nodoArbol right_, int identificador_, int numero_){
-      if (left==null && right==null){
+      if (left_==null && right_==null){
             anulabilidad = false;
             this.primeros.add(numero_);
             this.ultimos.add(numero_);
             this.numero = numero_;
         }else{
-          
-            if ("|".equals(valor_)){
-                    if(this.left.getAnulabilidad() || this.right.getAnulabilidad()){
-                        this.anulabilidad = true;
-                    }else{
-                        this.anulabilidad = false;
-                    }
-                    this.primeros.addAll(this.left.primeros);
-                    this.primeros.addAll(this.right.primeros);
-                    this.ultimos.addAll(this.left.ultimos);
-                    this.ultimos.addAll(this.right.ultimos);
-                 }else if(".".equals(valor_)){
+            if(".".equals(valor_)){
 
                     if(this.left.getAnulabilidad() && this.right.getAnulabilidad()){
                         this.anulabilidad = true;
@@ -67,6 +55,17 @@ public class nodoArbol {
                     }else{
                         this.ultimos.addAll(this.right.ultimos);
                     }
+                 }
+                else if ("|".equals(valor_)){
+                    if(this.left.getAnulabilidad() || this.right.getAnulabilidad()){
+                        this.anulabilidad = true;
+                    }else{
+                        this.anulabilidad = false;
+                    }
+                    this.primeros.addAll(this.left.primeros);
+                    this.primeros.addAll(this.right.primeros);
+                    this.ultimos.addAll(this.left.ultimos);
+                    this.ultimos.addAll(this.right.ultimos);
                  }else if("?".equals(valor_)){
                     this.anulabilidad = true;
                     this.primeros.addAll(this.left.primeros);

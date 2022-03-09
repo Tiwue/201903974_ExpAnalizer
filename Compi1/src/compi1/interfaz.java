@@ -377,7 +377,7 @@ public class interfaz extends javax.swing.JFrame {
              
               while(true){
                    String nombre= "Nuevo"+ indice+".exp";
-                   String ruta="C:\\Users\\steve\\Desktop\\Compiladores\\Proyecto1\\201903974_ExpAnalizer\\Compi1\\Reportes\\EXPRESIONES_201903974\\";
+                   String ruta="./Reportes\\\\ERRORES_201903974\\\\";
                    File f = new File(ruta+nombre);
                    if (!f.exists()) {
                         f.createNewFile();
@@ -460,7 +460,6 @@ public class interfaz extends javax.swing.JFrame {
             }
         } catch (Exception ex) {
             System.out.println("No se pudo realizar el analisis");
-            System.out.println("Causa: "+ex.getCause());
         } 
     }
     
@@ -539,9 +538,7 @@ public class interfaz extends javax.swing.JFrame {
             encontrada = false;
             for(AFD automata:this.deterministas){
                 if(automata.getNombre().equals(validacion.getNombre())){
-                    cadena+="  {\n";
-                    cadena+="      \"Valor\":\""+validacion.getCadena().replace("\\'", "\\\\'").replace("\\\"", "\\\\\\\"").replace("\\n", "\\\\n")+"\",\n";
-                    cadena+="      \"ExpresionRegular\":\""+validacion.getNombre()+"\",\n";
+                    cadena+="  {\n      \"Valor\":\""+validacion.getCadena().replace("\\'", "\\\\'").replace("\\\"", "\\\\\\\"").replace("\\n", "\\\\n")+"\",\n     \"ExpresionRegular\":\""+validacion.getNombre()+"\",\n";
                     if(automata.validarCadena(validacion.getCadena())){
                         cadena+="      \"Resultado\":\"Cadena Valida\"\n";
                         imprimir("La cadena: "+validacion.getCadena()+", es valida con la expresion: "+validacion.getNombre()+".\n");

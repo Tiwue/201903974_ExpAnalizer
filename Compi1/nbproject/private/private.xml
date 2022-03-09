@@ -3,19 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/Arbol.java</file>
             <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Analizadores/lexico.jflex</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/Conjunto.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/compi1/VentanaPrincipal.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/AFD.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/Validacion.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/listaSiguientes.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Analizadores/Generador.java</file>
+            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/Arbol.java</file>
             <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Analizadores/sintactico.cup</file>
             <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Analizadores/Sintactico.java</file>
             <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/compi1/interfaz.java</file>
             <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/compi1/ExpAnalizer.java</file>
-            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/Transicion.java</file>
+            <file>file:/C:/Users/steve/Desktop/Compiladores/Proyecto1/201903974_ExpAnalizer/Compi1/src/Estructuras/nodoArbol.java</file>
         </group>
     </open-files>
 </project-private>
